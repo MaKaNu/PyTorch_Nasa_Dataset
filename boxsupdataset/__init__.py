@@ -3,6 +3,7 @@ from torch.utils.data import Dataset, DataLoader
 from pathlib import Path
 import glob
 import pandas as pd
+from skimage import io, transform
 
 
 class NasaBoxSupDataset(Dataset):
@@ -20,11 +21,11 @@ class NasaBoxSupDataset(Dataset):
         assert callable(transform) or transform is None, \
             'transform needs to be a callable'
 
-        self.__classes = pd.read_csv(classfile)
         self.__rootDir = Path(rootDir)
         self.__transform = transform
         self.__imgDir = self.rootDir / 'Images'
         self.__labelDir = self.rootDir / 'Labels'
+        self.__classes = pd.read_csv(self.__labelDir / classfile)
 
     def __len__(self):
         return len(glob.glob1(self.imgDir, "*.png"))
@@ -35,7 +36,16 @@ class NasaBoxSupDataset(Dataset):
 
         img_files = glob.glob1(self.imgDir, "*.png")
         img_name = img_files[idx]
-        label_files = 
+        label_files = glob.glob1(self.labelDir, "*.png")
+        label_name = label_files[idx]
+        image = io.imread(self.imgDir / img_name)
+        label = io.imread(self.labelDir / label_name)
+        sample = {'image': image, 'label': label}
+
+        if self.transform:
+            sample = self.transform(sample)
+
+        return sample
 
     ###########################################################################
     #                       G E T T E R  &  S E T T E R                       #
@@ -82,10 +92,11 @@ class NasaBoxSupDataset(Dataset):
     rootDir = property(__getRootDir, __setRootDir)
     transform = property(__getTransform, __setTransform)
     imgDir = property(__getImgDir, __setImgDir)
-    LabelDir = property(__getLabelDir, __setLabelDir)
+    labelDir = property(__getLabelDir, __setLabelDir)
 
 
 # FOR DEBUGGING #
 if __name__ == "__main__":
-    testDataset = NasaBoxSupDataset('data/TestBatch')
+    testDataset = NasaBoxSupDataset('classes_bxsp.txt', 'data/TestBatch')
     print(len(testDataset))
+    print(testDataset[3])
