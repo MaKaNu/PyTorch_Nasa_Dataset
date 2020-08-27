@@ -4,7 +4,7 @@ from skimage import img_as_float
 
 
 class TotalVariation(object):
-    """Denoises the Image with Total Variation Filter
+    """Denoises the Image with Total Variation Filter (Chambolle)
     ReadMore:
     https://scikit-image.org/docs/dev/api/skimage.restoration.html#skimage.restoration.denoise_tv_chambolle
 
@@ -57,13 +57,16 @@ class TotalVariation(object):
 
 
 class TotalVariation2(object):
-    """Denoises the Image with Total Variation Filter
+    """Denoises the Image with Total Variation Filter (Bregman)
     ReadMore:
-    https://scikit-image.org/docs/dev/api/skimage.restoration.html#skimage.restoration.denoise_tv_chambolle
+    https://scikit-image.org/docs/dev/api/skimage.restoration.html#skimage.restoration.denoise_tv_bregman
 
     Args:
-        weight (float): Denoising weight. The greater weight, the more
-            denoising (at the expense of fidelity to input).
+        weight (float): Denoising weight. The smaller the weight, the more
+            denoising (at the expense of less similarity to the input). The
+            regularization parameter lambda is chosen as 2 * weight.
+        isotropic (bool): Switch between isotropic and anisotropic TV
+            denoising.
         multichannel (bool): Apply total-variation denoising separately for
             each channel. This option should be true for color images,
             otherwise the denoising is also applied in the channels dimension.
