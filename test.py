@@ -1,20 +1,23 @@
 from BoxSupDataset.NasaBoxSupDataset import NasaBoxSupDataset
-from BoxSupDataset.transforms.denoise import TotalVariation, Bilateral, Wavelet
+from BoxSupDataset.transforms.denoise import TotalVariation, Bilateral, \
+    Wavelet, TotalVariation2
 from BoxSupDataset.utils import show_x_images
 from torchvision import transforms
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
 
 
-transformed_testDataset = NasaBoxSupDataset(classfile='classes_bxsp.txt',
-                                            rootDir='data/TestBatch',
-                                            transform=transforms.Compose([
-                                                Wavelet()
-                                            ]))
+transformed_testDataset = NasaBoxSupDataset(
+    classfile='classes_bxsp.txt',
+    rootDir='data/TestBatch',
+    transform=transforms.Compose(
+        [TotalVariation2(isotropic=False)]
+        ))
 
-testDataset = NasaBoxSupDataset(classfile='classes_bxsp.txt',
-                                rootDir='data/TestBatch'
-                                )
+testDataset = NasaBoxSupDataset(
+    classfile='classes_bxsp.txt',
+    rootDir='data/TestBatch'
+    )
 
 print(len(transformed_testDataset))
 print(transformed_testDataset[0])
