@@ -11,7 +11,7 @@ transformed_testDataset = NasaBoxSupDataset(
     classfile='classes_bxsp.txt',
     rootDir='data/TestBatch',
     transform=transforms.Compose(
-        [TotalVariation2(isotropic=False)]
+        [TotalVariation2(weight=10.0, isotropic=False)]
         ))
 
 testDataset = NasaBoxSupDataset(
