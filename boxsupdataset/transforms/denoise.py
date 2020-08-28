@@ -1,3 +1,13 @@
+""" This Module includes a number of classes which used as transformations
+    for pythorch Datasets:
+    The module represents Image denoising:
+        TotalVariation: Uses a Total Variation Filter after Chambolle
+        TotalVariation2: Uses a Total Variation Filter after Bregman
+        Bilateral: Uses a bilateral Filter
+        Wavelet: Uses a Wavelet Filter
+"""
+
+from __future__ import absolute_import
 from skimage.restoration import (denoise_tv_chambolle, denoise_bilateral,
                                  denoise_wavelet, denoise_tv_bregman)
 from skimage import img_as_float
@@ -34,26 +44,30 @@ class TotalVariation(object):
 
         return {'image': image, 'label': label}
 
-    def __getWeight(self):
+    def __getWeight__(self):
         return self.__weight
 
-    def __getMultichannel(self):
+    def __getMultichannel__(self):
         return self.__multichannel
 
-    def __setWeight(self, x):
-        if isinstance(x, float):
-            self.__weight = x
+    def __setWeight__(self, var_to_set):
+        if isinstance(var_to_set, float):
+            self.__weight = var_to_set
         else:
-            raise ValueError(x, "weight needs to be a float value")
+            raise ValueError(
+                var_to_set,
+                "weight needs to be a float value")
 
-    def __setMultichannel(self, x):
-        if isinstance(x, bool):
-            self.__multichannel = x
+    def __setMultichannel__(self, var_to_set):
+        if isinstance(var_to_set, bool):
+            self.__multichannel = var_to_set
         else:
-            raise ValueError(x, "multichannel needs to be a bool value")
+            raise ValueError(
+                var_to_set,
+                "multichannel needs to be a bool value")
 
-    weight = property(__getWeight, __setWeight)
-    multichannel = property(__getMultichannel, __setMultichannel)
+    weight = property(__getWeight__, __setWeight__)
+    multichannel = property(__getMultichannel__, __setMultichannel__)
 
 
 class TotalVariation2(object):
@@ -89,42 +103,48 @@ class TotalVariation2(object):
         image, label = sample['image'], sample['label']
         image = img_as_float(image)
         image = denoise_tv_bregman(image,
-                                     weight=self.weight,
-                                     isotropic=self.isotropic,
-                                     multichannel=self.multichannel)
+                                   weight=self.weight,
+                                   isotropic=self.isotropic,
+                                   multichannel=self.multichannel)
 
         return {'image': image, 'label': label}
 
-    def __getWeight(self):
+    def __getWeight__(self):
         return self.__weight
 
-    def __getIsotropic(self):
+    def __getIsotropic__(self):
         return self.__isotropic
 
-    def __getMultichannel(self):
+    def __getMultichannel__(self):
         return self.__multichannel
 
-    def __setWeight(self, x):
-        if isinstance(x, float):
-            self.__weight = x
+    def __setWeight__(self, var_to_set):
+        if isinstance(var_to_set, float):
+            self.__weight = var_to_set
         else:
-            raise ValueError(x, "weight needs to be a float value")
+            raise ValueError(
+                var_to_set,
+                "weight needs to be a float value")
 
-    def __setIsotropic(self, x):
-        if isinstance(x, bool):
-            self.__isotropic = x
+    def __setIsotropic__(self, var_to_set):
+        if isinstance(var_to_set, bool):
+            self.__isotropic = var_to_set
         else:
-            raise ValueError(x, "isotrpoic needs to be a bool value")
+            raise ValueError(
+                var_to_set,
+                "isotrpoic needs to be a bool value")
 
-    def __setMultichannel(self, x):
-        if isinstance(x, bool):
-            self.__multichannel = x
+    def __setMultichannel__(self, var_to_set):
+        if isinstance(var_to_set, bool):
+            self.__multichannel = var_to_set
         else:
-            raise ValueError(x, "multichannel needs to be a bool value")
+            raise ValueError(
+                var_to_set,
+                "multichannel needs to be a bool value")
 
-    weight = property(__getWeight, __setWeight)
-    isotropic = property(__getIsotropic, __setIsotropic)
-    multichannel = property(__getMultichannel, __setMultichannel)
+    weight = property(__getWeight__, __setWeight__)
+    isotropic = property(__getIsotropic__, __setIsotropic__)
+    multichannel = property(__getMultichannel__, __setMultichannel__)
 
 
 class Bilateral(object):
@@ -146,60 +166,66 @@ class Bilateral(object):
             interpreted as multiple channels or another spatial dimension.
     """
     def __init__(self,
-                 sigmaColor: float = 0.05,
-                 sigmaSpatial: float = 15.0,
+                 sigma_color: float = 0.05,
+                 sigma_spatial: float = 15.0,
                  multichannel: bool = True) -> None:
         assert False, "THIS TRANSFORMATION IS UNDER CONSTRUCTION!"
-        assert isinstance(sigmaColor, float), \
+        assert isinstance(sigma_color, float), \
             "sigmaColor needs to be a float value"
-        assert isinstance(sigmaSpatial, float), \
+        assert isinstance(sigma_spatial, float), \
             "sigmaSpatial needs to be a float value"
         assert isinstance(multichannel, bool), \
             "multichannel needs to be a bool value"
-        self.__sigmaColor = sigmaColor
-        self.__sigmaSpatial = sigmaSpatial
+        self.__sigma_color = sigma_color
+        self.__sigma_spatial = sigma_spatial
         self.__multichannel = multichannel
 
     def __call__(self, sample: dict) -> dict:
         image, label = sample['image'], sample['label']
         image = img_as_float(image)
         image = denoise_bilateral(image,
-                                  sigma_color=self.sigmaColor,
-                                  sigma_spatial=self.sigmaSpatial,
+                                  sigma_color=self.sigma_color,
+                                  sigma_spatial=self.sigma_spatial,
                                   multichannel=self.multichannel)
 
         return {'image': image, 'label': label}
 
-    def __getSigmaColor(self):
-        return self.__sigmaColor
+    def __getSigmacolor__(self):
+        return self.__sigma_color
 
-    def __getsigmaSpatial(self):
-        return self.__sigmaSpatial
+    def __getsigmaspatial__(self):
+        return self.__sigma_spatial
 
-    def __getMultichannel(self):
+    def __getMultichannel__(self):
         return self.__multichannel
 
-    def __setSigmaColor(self, x):
-        if isinstance(x, float):
-            self.__sigmaColor = x
+    def __setSigmacolor__(self, var_to_set):
+        if isinstance(var_to_set, float):
+            self.__sigma_color = var_to_set
         else:
-            raise ValueError(x, "sigmaColor needs to be a float value")
+            raise ValueError(
+                var_to_set,
+                "sigmaColor needs to be a float value")
 
-    def __setSigmaSpatial(self, x):
-        if isinstance(x, float):
-            self.__sigmaSpatial = x
+    def __setSigmaspatial__(self, var_to_set):
+        if isinstance(var_to_set, float):
+            self.__sigma_spatial = var_to_set
         else:
-            raise ValueError(x, "sigmaSpatial needs to be a float value")
+            raise ValueError(
+                var_to_set,
+                "sigmaSpatial needs to be a float value")
 
-    def __setMultichannel(self, x):
-        if isinstance(x, bool):
-            self.__multichannel = x
+    def __setMultichannel__(self, var_to_set):
+        if isinstance(var_to_set, bool):
+            self.__multichannel = var_to_set
         else:
-            raise ValueError(x, "multichannel needs to be a bool value")
+            raise ValueError(
+                var_to_set,
+                "multichannel needs to be a bool value")
 
-    sigmaColor = property(__getSigmaColor, __setSigmaColor)
-    sigmaSpatial = property(__getsigmaSpatial, __setSigmaSpatial)
-    multichannel = property(__getMultichannel, __setMultichannel)
+    sigma_color = property(__getSigmacolor__, __setSigmacolor__)
+    sigma_spatial = property(__getsigmaspatial__, __setSigmaspatial__)
+    multichannel = property(__getMultichannel__, __setMultichannel__)
 
 
 class Wavelet(object):
@@ -223,16 +249,16 @@ class Wavelet(object):
     def __init__(self,
                  multichannel: bool = True,
                  convert2ycbcr: bool = False,
-                 rescaleSigma: bool = True) -> None:
+                 rescale_sigma: bool = True) -> None:
         assert isinstance(multichannel, bool), \
             "multichannel needs to be a bool value"
         assert isinstance(convert2ycbcr, bool), \
             "convert2ycbr needs to be a bool value"
-        assert isinstance(rescaleSigma, bool), \
-            "rescaleSigma needs to be a bool value"
+        assert isinstance(rescale_sigma, bool), \
+            "rescale_sigma needs to be a bool value"
         self.__multichannel = multichannel
         self.__convert2ycbcr = convert2ycbcr
-        self.__rescaleSigma = rescaleSigma
+        self.__rescale_sigma = rescale_sigma
 
     def __call__(self, sample: dict) -> dict:
         image, label = sample['image'], sample['label']
@@ -240,37 +266,43 @@ class Wavelet(object):
         image = denoise_wavelet(image,
                                 multichannel=self.multichannel,
                                 convert2ycbcr=self.convert2ycbcr,
-                                rescale_sigma=self.rescaleSigma)
+                                rescale_sigma=self.rescale_sigma)
 
         return {'image': image, 'label': label}
 
-    def __getMultichannel(self):
+    def __getMultichannel__(self):
         return self.__multichannel
 
-    def __getConvert2ycbcr(self):
+    def __getConvert2ycbcr__(self):
         return self.__convert2ycbcr
 
-    def __getRescaleSigma(self):
-        return self.__rescaleSigma
+    def __getRescaleSigma__(self):
+        return self.__rescale_sigma
 
-    def __setMultichannel(self, x):
-        if isinstance(x, bool):
-            self.__multichannel = x
+    def __setMultichannel__(self, var_to_set):
+        if isinstance(var_to_set, bool):
+            self.__multichannel = var_to_set
         else:
-            raise ValueError(x, "multichannel needs to be a bool value")
+            raise ValueError(
+                var_to_set,
+                "multichannel needs to be a bool value")
 
-    def __setConvert2ycbcr(self, x):
-        if isinstance(x, bool):
-            self.__convert2ycbcr = x
+    def __setConvert2ycbcr__(self, var_to_set):
+        if isinstance(var_to_set, bool):
+            self.__convert2ycbcr = var_to_set
         else:
-            raise ValueError(x, "convert2ycbcr needs to be a bool value")
+            raise ValueError(
+                var_to_set,
+                "convert2ycbcr needs to be a bool value")
 
-    def __setRescaleSigma(self, x):
-        if isinstance(x, bool):
-            self.__rescaleSigma = x
+    def __setRescaleSigma__(self, var_to_set):
+        if isinstance(var_to_set, bool):
+            self.__rescale_sigma = var_to_set
         else:
-            raise ValueError(x, "rescaleSigma needs to be a bool value")
+            raise ValueError(
+                var_to_set,
+                "rescaleSigma needs to be a bool value")
 
-    multichannel = property(__getMultichannel, __setMultichannel)
-    convert2ycbcr = property(__getConvert2ycbcr, __setConvert2ycbcr)
-    rescaleSigma = property(__getRescaleSigma, __setRescaleSigma)
+    multichannel = property(__getMultichannel__, __setMultichannel__)
+    convert2ycbcr = property(__getConvert2ycbcr__, __setConvert2ycbcr__)
+    rescale_sigma = property(__getRescaleSigma__, __setRescaleSigma__)
