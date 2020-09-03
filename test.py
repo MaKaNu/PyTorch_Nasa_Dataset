@@ -19,12 +19,12 @@ def show_boxsup_batch(batched_sample):
 
     grid_img = utils.make_grid(images_batch)
     grid_lbl = utils.make_grid(labels_batch)
-    ax = plt.subplot(2, 1, 1)
-    ax.axis('off')
+    ax1 = plt.subplot(2, 1, 1)
+    ax1.axis('off')
     plt.title('Batch from DataLoader')
     plt.imshow(grid_img.numpy().transpose((1, 2, 0)))
-    ax = plt.subplot(2, 1, 2)
-    ax.axis('off')
+    ax1 = plt.subplot(2, 1, 2)
+    ax1.axis('off')
     plt.imshow(grid_lbl.numpy().transpose((1, 2, 0)))
 
     plt.title('Batch from DataLoader')
