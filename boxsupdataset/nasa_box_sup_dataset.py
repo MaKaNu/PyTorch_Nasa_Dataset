@@ -69,6 +69,9 @@ class NasaBoxSupDataset(Dataset):
     def __getLabelDir__(self):
         return self.__label_dir
 
+    def __getClasses__(self):
+        return self.__classes
+
     # #--> Setter:
     def __setRootDir__(self, val_to_set):
         if isinstance(val_to_set, Path):
@@ -94,8 +97,15 @@ class NasaBoxSupDataset(Dataset):
         else:
             raise ValueError(val_to_set, 'label_dir needs to be Path instance.')
 
+    def __setClasses__(self, val_to_set):
+        if isinstance(val_to_set, pd.core.frame.DataFrame):
+            self.__classes = val_to_set
+        else:
+            raise ValueError(val_to_set, 'classes needs to be Path instance.')
+
     # #--> Properties:
     root_dir = property(__getRootDir__, __setRootDir__)
     transform = property(__getTransform__, __setTransform__)
     img_dir = property(__getImgDir__, __setImgDir__)
     label_dir = property(__getLabelDir__, __setLabelDir__)
+    classes = property(__getClasses__, __setClasses__)
