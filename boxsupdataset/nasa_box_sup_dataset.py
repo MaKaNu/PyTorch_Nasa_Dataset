@@ -21,11 +21,11 @@ class NasaBoxSupDataset(Dataset):
             root_dir (string): Directory with img folder and label folder.
             transform (callable, optional): Optional transform to be applied.
         """
-        assert (Path(rootDir) / 'Images').exists and \
-            (Path(rootDir) / 'Labels').exists, \
-            'rootDir has not the Correct Format'
+        assert (Path(rootDir) / 'Images').exists() and \
+            (Path(rootDir) / 'Labels').exists(), \
+            'rootDir has not the Correct Format or does not exists.'
         assert callable(transform) or transform is None, \
-            'transform needs to be a callable'
+            'transform needs to be a callable.'
 
         self.__root_dir = Path(rootDir)
         self.__transform = transform
