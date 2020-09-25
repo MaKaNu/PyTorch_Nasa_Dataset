@@ -31,7 +31,7 @@ def show_boxsup_batch(batched_sample):
 
 transformed_testDataset = NasaBoxSupDataset(
     classfile='classes_bxsp.txt',
-    rootDir='data/TestBatch',
+    root_dir='data/TestBatch',
     transform=transforms.Compose(
         [TotalVariation2(weight=10.0, isotropic=False),
          ToTensor()
@@ -40,11 +40,16 @@ transformed_testDataset = NasaBoxSupDataset(
 
 testDataset = NasaBoxSupDataset(
     classfile='classes_bxsp.txt',
-    rootDir='data/TestBatch',
+    root_dir='data/TestBatch',
     transform=transforms.Compose(
         [ToTensor(),
         ]
     ))
+
+testDataset.transform=transforms.Compose(
+    [ToTensor(),
+    TotalVariation2()]
+)
 
 # print(len(transformed_testDataset))
 # print(transformed_testDataset[0])
