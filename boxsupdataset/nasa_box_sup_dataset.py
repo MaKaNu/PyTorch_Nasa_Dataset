@@ -8,6 +8,7 @@ from pathlib import Path
 import glob
 import torch
 from torch.utils.data import Dataset
+from pandas.core.frame import DataFrame
 import pandas as pd
 from skimage import io
 
@@ -15,23 +16,25 @@ from skimage import io
 class NasaBoxSupDataset(Dataset):
     """ Nasa Box Sup dataset. """
 
-    def __init__(self, classfile, rootDir, transform=None):
+    def __init__(
+        self, classfile, root_dir, transform=None, target_transfrom=None):
         """
         Args:
             root_dir (string): Directory with img folder and label folder.
             transform (callable, optional): Optional transform to be applied.
         """
-        assert (Path(rootDir) / 'Images').exists() and \
-            (Path(rootDir) / 'Labels').exists(), \
+        assert (Path(root_dir) / 'Images').exists() and \
+            (Path(root_dir) / 'Labels').exists(), \
             'rootDir has not the Correct Format or does not exists.'
-        assert callable(transform) or transform is None, \
+        assert callable(transform), \
             'transform needs to be a callable.'
 
-        self.__root_dir = Path(rootDir)
-        self.__transform = transform
-        self.__img_dir = self.root_dir / Path('Images')
-        self.__label_dir = self.root_dir / Path('Labels')
-        self.__classes = pd.read_csv(self.__label_dir / Path(classfile))
+        self.root_dir = Path(root_dir)
+        self.transform = transform
+        self.target_transform = target_transfrom
+        self.img_dir = self.root_dir / Path('Images')
+        self.label_dir = self.root_dir / Path('Labels')
+        self.classes = pd.read_csv(self.label_dir / Path(classfile))
 
     def __len__(self):
         return len(glob.glob1(self.img_dir, "*.png"))
@@ -48,64 +51,89 @@ class NasaBoxSupDataset(Dataset):
         label = io.imread(self.label_dir / Path(label_name))
         sample = {'image': image, 'label': label}
 
-        if self.transform:
-            sample = self.transform(sample)
+        if self.transform is not None:
+            sample['image'] = self.transform(sample['image'])
+        if self.target_transform is not None:
+            sample['label'] = self.transform(sample['label'])
 
         return sample
 
-    ###########################################################################
-    #                       G E T T E R  &  S E T T E R                       #
-    ###########################################################################
-    # #--> Getter:
-    def __getRootDir__(self):
-        return self.__root_dir
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}'
+                f'Attirbutes:'
+                f'root_dir={self.root_dir},'
+                f'transfomrs={self.transform},'
+                f'img_dir={self.img_dir},'
+                f'label_dir={self.label_dir},'
+                f'classes={self.classes}'
+                )
 
-    def __getTransform__(self):
-        return self.__transform
+    def make_dataset(self):
+        pass # TODO
+    
+    @property
+    def root_dir(self):
+        """ root_dir Getter"""
+        return self._root_dir
+    
+    @root_dir.setter
+    def root_dir(self, value):
+        if not isinstance(value, Path):
+            raise TypeError("value needs to be of Type Path")
+        self._root_dir = value
 
-    def __getImgDir__(self):
-        return self.__img_dir
+    @property
+    def transform(self):
+        """ transform Getter"""
+        return self._transform
+    
+    @transform.setter
+    def transform(self, value):
+        if not (callable(value) or value is None):
+            raise TypeError("value needs to be a callable")
+        self._transform = value
 
-    def __getLabelDir__(self):
-        return self.__label_dir
+    @property
+    def target_transform(self):
+        """ target_transform Getter"""
+        return self._target_transform
+    
+    @target_transform.setter
+    def target_transform(self, value):
+        if not (callable(value) or value is None):
+            raise TypeError("value needs to be a callable")
+        self._target_transform = value
 
-    def __getClasses__(self):
-        return self.__classes
+    @property
+    def img_dir(self):
+        """ img_dir Getter"""
+        return self._img_dir
+    
+    @img_dir.setter
+    def img_dir(self, value):
+        if not isinstance(value, Path):
+            raise TypeError("value needs to be of Type Path")
+        self._img_dir = value
 
-    # #--> Setter:
-    def __setRootDir__(self, val_to_set):
-        if isinstance(val_to_set, Path):
-            self.__root_dir = val_to_set
-        else:
-            raise ValueError(val_to_set, 'root_dir needs to be Path instance.')
+    @property
+    def label_dir(self):
+        """ label_dir Getter"""
+        return self._label_dir
+    
+    @label_dir.setter
+    def label_dir(self, value):
+        if not isinstance(value, Path):
+            raise TypeError("value needs to be of Type Path")
+        self._label_dir = value
 
-    def __setTransform__(self, val_to_set):
-        if callable(val_to_set):
-            self.__transform = val_to_set
-        else:
-            raise ValueError(val_to_set, 'transform need to be a callable.')
-
-    def __setImgDir__(self, val_to_set):
-        if isinstance(val_to_set, Path):
-            self.__img_dir = val_to_set
-        else:
-            raise ValueError(val_to_set, 'img_dir needs to be Path instance.')
-
-    def __setLabelDir__(self, val_to_set):
-        if isinstance(val_to_set, Path):
-            self.__label_dir = val_to_set
-        else:
-            raise ValueError(val_to_set, 'label_dir needs to be Path instance.')
-
-    def __setClasses__(self, val_to_set):
-        if isinstance(val_to_set, pd.core.frame.DataFrame):
-            self.__classes = val_to_set
-        else:
-            raise ValueError(val_to_set, 'classes needs to be Path instance.')
-
-    # #--> Properties:
-    root_dir = property(__getRootDir__, __setRootDir__)
-    transform = property(__getTransform__, __setTransform__)
-    img_dir = property(__getImgDir__, __setImgDir__)
-    label_dir = property(__getLabelDir__, __setLabelDir__)
-    classes = property(__getClasses__, __setClasses__)
+    @property
+    def classes(self):
+        """ classes Getter"""
+        return self._classes
+    
+    @classes.setter
+    def classes(self, value):
+        if not isinstance(value, DataFrame):
+            raise TypeError("value needs to be of Type DataFrame")
+        self._classes = value
+    
