@@ -83,12 +83,12 @@ class NasaBoxSupDataset(Dataset):
         img_path = self.root_dir / Path('Images')
         mask_path = self.root_dir / Path('Labels')
         if self.labeltype == 'image':
-            label_files = glob.glob1(mask_path, "*.png")
+            label_files = sorted(glob.glob1(mask_path, "*.png"))
         elif self.labeltype == 'mask':
-            label_files = glob.glob1(mask_path, "*.mat")
+            label_files = sorted(glob.glob1(mask_path, "*.mat"))
         else:
             raise RuntimeError('{self.labeltype} is not defined!')
-        image_files = glob.glob1(img_path, "*.png")
+        image_files = sorted(glob.glob1(img_path, "*.png"))
         for index, img in enumerate(image_files):
             if label_files[index].split('_label')[0] == \
                img.split('.png')[0]:
